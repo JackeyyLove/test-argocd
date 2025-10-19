@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-sts
+  labels: 
+    database: {{ .Chart.Name }} 
+spec:
+  selector:
+    matchLabels:
+      database: {{ .Chart.Name }} 
+ # has to match .spec.template.metadata.labels
+  serviceName: {{ .Release.Name }}-db-svc
+  replicas: 1 # by default is 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        database: {{ .Chart.Name }}  # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default 10 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ default "latest" .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.global.imagePullPolicy | default .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: tcp
+        env: 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom: 
+            secretKeyRef: 
+              name: {{ .Release.Name }}-secret
+              key: password
+        - name: MYSQL_DATABASE
+          value: {{ .Values.initDB | default "studentdb" }}
+        volumeMounts:
+        - name: mysql-pvc
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: ""
+      resources:
+        requests:
+          storage: {{ .Values.persistent.size | default "1Gi" }}

@@ -7,7 +7,7 @@ global:
 frontend: 
   image: 
     repository: louisdevops/student-management-frontend
-    tag: "latest"
+    tag: "v1.1.1"
 backend: 
   image: 
     repository: louisdevops/student-management-backend

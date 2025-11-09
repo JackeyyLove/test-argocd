@@ -2,17 +2,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-global: 
+global:
   imagePullPolicy: IfNotPresent
-frontend: 
-  image: 
+frontend:
+  image:
     repository: louisdevops/student-management-frontend
-    tag: "v1.1.1"
-backend: 
-  image: 
+    tag: "73"
+backend:
+  image:
     repository: louisdevops/student-management-backend
     tag: "latest"
-mysql: 
-  image: 
+mysql:
+  image:
     repository: mysql
     tag: "8.0"
